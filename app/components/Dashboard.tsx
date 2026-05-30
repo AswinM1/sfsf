@@ -8,15 +8,15 @@ function Dashboard() {
   const [link, setLink] = useState<string>("");
   const [tags, setTags] = useState<string>("");
   const [data, setData] = useState<any[]>([]);
-
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [sh, setSh] = useState("");
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
+  const [activeNav, setActiveNav] = useState<string>("All");
 
   useEffect(() => {
     getData();
-      
   }, []);
 
   const getData = async () => {
@@ -24,7 +24,7 @@ function Dashboard() {
       setLoading(true);
       const res = await axios.get("/api/upload");
       setData(res.data.data);
-      setAllData(res.data.data)
+      setAllData(res.data.data);
       setError(null);
     } catch (err) {
       setError("Failed to fetch data.");
@@ -43,29 +43,20 @@ function Dashboard() {
   };
 
   const handleUpload = async () => {
-    if ( !link ) {
+    if (!link) {
       setError("Please fill in all fields.");
       return;
     }
-
     try {
       setLoading(true);
       const token = localStorage.getItem("token");
       const tagArray = tags.split(",").map((tag) => tag.trim()).filter(Boolean);
-
-      const res = await axios.post(
+      await axios.post(
         "/api/upload",
-        {  link, tags: tagArray },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        { link, tags: tagArray },
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-
-    
       setLink("");
-    
       setTags("");
       getData();
       setError(null);
@@ -77,137 +68,352 @@ function Dashboard() {
       setLoading(false);
     }
   };
-  const printdata=()=>
-  {
-    axios.get("/api/upload").then((res)=>
-    {
-      setData(res.data)
-    })
-  }
+
+  const navItems = [
+    { label: "All", icon: "▦" },
+    { label: "Links", icon: "⌁" },
+    { label: "Tags", icon: "⊹" },
+    { label: "Shared", icon: "↗" },
+  ];
 
   return (
-    <div className="min-h-screen bg-neutral-200 text-white p-6  ">
-      <div className="md:max-w-5xl mx-auto border px-4 py-4 rounded-md border-neutral-400 bg-neutral-200 ">
-        <div className="flex justify-between gap-3 bg-neutral-100 shadow-lg items-center mb-6 border border-neutral-200 px-4 py-4 rounded-md">
-          <h1 className="text-2xl font-bold text-black font-sans tracking-tighter">Dashboard</h1>
-          <div className="gap-4 flex px-2">
-          <button
-            onClick={() => setShowModal(true)}
-            className="bg-gradient-to-t from-black to-neutral-700 cursor-pointer text-white px-4 py-2 rounded"
-          >
-          Add Item
-          </button>
-           <button
-            onClick={share}
-              className="bg-gradient-to-t from-black to-neutral-700 cursor-pointer text-white px-4 py-2 rounded"
-          >
-            Share 
-          </button>
-          <input onChange={(e)=>
-            {
-              if(e.target.value.length>0){setData(data.filter((val)=>val.title.includes(e.target.value)))}
-              else{
-                setData(allData)
-              }
-            }
-          } placeholder="search" className="text-black rounded-md border-neutral-800 border px-4 py-3 items-center  "></input>
-          </div>
+    <div
+      className="min-h-screen flex bg-[#0c0c0c] text-white"
+      style={{ fontFamily: "'DM Mono', 'Courier New', monospace" }}
+    >
+      {/* ---------- SIDEBAR OVERLAY (mobile) ---------- */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-20 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      {/* ---------- SIDEBAR ---------- */}
+      <aside
+        className={`
+          fixed top-0 left-0 h-full z-30 w-60
+          bg-[#111111] border-r border-white/[0.06]
+          flex flex-col
+          transition-transform duration-300 ease-in-out
+          ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
+          lg:translate-x-0 lg:static lg:flex
+        `}
+      >
+        {/* Logo */}
+        <div className="px-6 py-7 border-b border-white/[0.06]">
+          <span className="text-white font-semibold text-sm tracking-widest uppercase">
+            ◈ Workspace
+          </span>
         </div>
 
-        {loading && <p className="text-black rounded-full w-10 h-10 mx-auto flex justify-center items-center">loading</p>}
-        {error && <p className="text-black">{error}</p>}
+        {/* Nav */}
+        <nav className="flex-1 px-3 py-6 space-y-1">
+          {navItems.map((item) => (
+            <button
+              key={item.label}
+              onClick={() => {
+                setActiveNav(item.label);
+                setSidebarOpen(false);
+              }}
+              className={`
+                w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm
+                transition-all duration-150 cursor-pointer text-left
+                ${
+                  activeNav === item.label
+                    ? "bg-white/10 text-white"
+                    : "text-white/40 hover:text-white/70 hover:bg-white/[0.04]"
+                }
+              `}
+            >
+              <span className="text-base leading-none">{item.icon}</span>
+              {item.label}
+            </button>
+          ))}
+        </nav>
 
-       
+        {/* Bottom action */}
+        <div className="px-4 py-5 border-t border-white/[0.06]">
+          <button
+            onClick={() => { setShowModal(true); setSidebarOpen(false); }}
+            className="
+              w-full flex items-center justify-center gap-2
+              bg-white text-black text-sm font-medium
+              px-4 py-2.5 rounded-lg
+              hover:bg-white/90 transition-colors duration-150 cursor-pointer
+            "
+          >
+            <span className="text-base leading-none">+</span>
+            Add Bookmark
+          </button>
+        </div>
+      </aside>
 
-        {sh && (
-          <div className="bg-blue-600 text-white p-2 rounded mb-4 break-all">
-            Shared Link Hash: {sh}
+      {/* ---------- MAIN CONTENT ---------- */}
+      <main className="flex-1 flex flex-col min-w-0">
+        {/* Top Bar */}
+        <header className="sticky top-0 z-10 bg-[#0c0c0c]/90 backdrop-blur border-b border-white/[0.06] px-5 py-4 flex items-center gap-4">
+          {/* Hamburger */}
+          <button
+            className="lg:hidden flex flex-col gap-[5px] p-1 cursor-pointer"
+            onClick={() => setSidebarOpen(true)}
+          >
+            <span className="w-5 h-px bg-white/70 block" />
+            <span className="w-5 h-px bg-white/70 block" />
+            <span className="w-3 h-px bg-white/70 block" />
+          </button>
+
+          {/* Search */}
+          <div className="flex-1 relative max-w-sm">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30 text-xs">⌕</span>
+            <input
+              placeholder="Search bookmarks…"
+              onChange={(e) => {
+                if (e.target.value.length > 0) {
+                  setData(allData.filter((val) => val.title?.includes(e.target.value)));
+                } else {
+                  setData(allData);
+                }
+              }}
+              className="
+                w-full bg-white/[0.05] border border-white/[0.08] rounded-lg
+                pl-8 pr-4 py-2 text-sm text-white/80 placeholder-white/25
+                outline-none focus:border-white/20 focus:bg-white/[0.07]
+                transition-all duration-150
+              "
+            />
           </div>
-        )}
 
-        <div className=" flex flex-wrap gap-3">
-          {data.length === 0 ? (
-            <p className="text-white bg-red-300 px-4 w-fit justify-center mx-auto py-4 rounded-md">No items found.</p>
-          ) : (
-            data.map((item, index) => (
-              <div
-                key={index}
-                className="bg-neutral-100 py-4 border-neutral-400 shadow-lg w-80 h-90 overflow-y-scroll p-4 rounded-md"
-              >
-                 <img src={item.img} alt={`${"https://picsum.photos/200/300/?blur"}`} className="w-70 bg-neutral-300 mb-3 h-50 mx-auto  rounded-md"></img>
-                <h3 className="text-lg font-semibold text-black font-sans tracking-tight">
-                 {item.title}</h3>
-                <p className="text-black font-sans justify-start  flex font-medium cursor-pointer tracking-tight">
-                 {item.link ? (
-  <Link
-    href={item.link}
-    target="_blank"
-    rel="noopener noreferrer"
-    className="text-blue-600 underline break-all"
-  >
-    {item.link}
-  </Link>
-) : (
-  <p className="text-neutral-600">no link</p>
-)}
+          <div className="flex items-center gap-2 ml-auto">
+            <button
+              onClick={share}
+              className="
+                flex items-center gap-1.5 px-3 py-2
+                text-xs text-white/50 hover:text-white/80
+                border border-white/[0.08] rounded-lg
+                hover:border-white/[0.15] hover:bg-white/[0.04]
+                transition-all duration-150 cursor-pointer
+              "
+            >
+              <span className="text-sm">↗</span>
+              Share
+            </button>
+            <button
+              onClick={() => setShowModal(true)}
+              className="
+                hidden sm:flex items-center gap-1.5 px-3 py-2
+                text-xs text-black font-medium
+                bg-white rounded-lg
+                hover:bg-white/90 transition-colors duration-150 cursor-pointer
+              "
+            >
+              <span>+</span>
+              Add
+            </button>
+          </div>
+        </header>
 
-                
-                </p>
-                {/* {item.tags && (
-                  <div className="mt-2 flex flex-wrap gap-2 mb-4">
-                    {item.tags.map((tag: any, i: number) => (
-                      <span
-                        key={i}
-                        className="bg-blue-300 font-sans tracking-tight font-semibold text-blue-900 text-md px-2 py-1 rounded-md w-fit h-fit"
-                      >
-                      {tag}
-                      </span>
-                    ))}
-                
-                  </div>
-                )} */}
+        {/* Content Body */}
+        <div className="flex-1 px-5 py-6 overflow-auto">
+
+          {/* Shared hash banner */}
+          {sh && (
+            <div className="mb-5 flex items-start gap-3 bg-white/[0.05] border border-white/[0.1] rounded-lg px-4 py-3">
+              <span className="text-white/40 text-xs mt-0.5">↗</span>
+              <div>
+                <p className="text-xs text-white/40 mb-0.5 uppercase tracking-widest">Shared Link Hash</p>
+                <p className="text-sm text-white/80 break-all font-mono">{sh}</p>
               </div>
-            ))
+              <button onClick={() => setSh("")} className="ml-auto text-white/30 hover:text-white/60 text-xs cursor-pointer">✕</button>
+            </div>
+          )}
+
+          {/* Error */}
+          {error && (
+            <div className="mb-5 bg-red-500/10 border border-red-500/20 text-red-400 text-sm rounded-lg px-4 py-3">
+              {error}
+            </div>
+          )}
+
+          {/* Loading shimmer */}
+          {loading && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className="bg-white/[0.03] rounded-xl h-64 animate-pulse border border-white/[0.05]" />
+              ))}
+            </div>
+          )}
+
+          {/* Cards grid */}
+          {!loading && (
+            <>
+              {data.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-28 text-center">
+                  <span className="text-4xl mb-4 opacity-20">◈</span>
+                  <p className="text-white/30 text-sm">No bookmarks yet.</p>
+                  <button
+                    onClick={() => setShowModal(true)}
+                    className="mt-4 text-xs text-white/50 hover:text-white/80 underline underline-offset-4 cursor-pointer"
+                  >
+                    Add your first bookmark
+                  </button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                  {data.map((item, index) => (
+                    <div
+                      key={index}
+                      className="
+                        group bg-[#111111] border border-white/[0.07]
+                        rounded-xl overflow-hidden
+                        hover:border-white/[0.15] hover:bg-[#141414]
+                        transition-all duration-200
+                        flex flex-col
+                      "
+                    >
+                      {/* Thumbnail */}
+                      <div className="w-full h-40 bg-white/[0.04] overflow-hidden">
+                        {item.img ? (
+                          <img
+                            src={item.img}
+                            alt={item.title}
+                            className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-[1.02] transition-all duration-300"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-white/10 text-3xl">
+                            ◈
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Info */}
+                      <div className="p-4 flex flex-col gap-2 flex-1">
+                        <h3 className="text-sm font-medium text-white/90 leading-snug line-clamp-2">
+                          {item.title || "Untitled"}
+                        </h3>
+
+                        {item.link ? (
+                          <Link
+                            href={item.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs text-white/35 hover:text-white/60 truncate transition-colors duration-150"
+                          >
+                            {item.link}
+                          </Link>
+                        ) : (
+                          <span className="text-xs text-white/20">No link</span>
+                        )}
+
+                        {/* {item.tags && item.tags.length > 0 && (
+                          <div className="flex flex-wrap gap-1.5 mt-auto pt-2">
+                            {item.tags.map((tag: string, i: number) => (
+                              <span
+                                key={i}
+                                className="text-[10px] text-white/40 border border-white/[0.08] px-2 py-0.5 rounded-full"
+                              >
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        )} */}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>
           )}
         </div>
-      </div>
+      </main>
 
+      {/* ---------- ADD BOOKMARK MODAL ---------- */}
       {showModal && (
-        <div className="fixed inset-0 bg-opacity-70 backdrop-blur-xs flex items-center justify-center z-50">
-          <div className="bg-neutral-100 p-6 rounded-lg w-full max-w-md">
-             
-            <h2 className="text-xl font-sans font-semibold tracking-tight gap-2 justify-between flex text-black mb-4">Add Something
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+          <div
+            className="absolute inset-0 bg-black/70 backdrop-blur-md"
+            onClick={() => setShowModal(false)}
+          />
+          <div
+            className="relative bg-[#111111] border border-white/[0.1] rounded-2xl w-full max-w-md p-6 shadow-2xl"
+            style={{ boxShadow: "0 0 60px rgba(0,0,0,0.6)" }}
+          >
+            {/* Modal header */}
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-base font-medium text-white/90 tracking-tight">New Bookmark</h2>
               <button
                 onClick={() => setShowModal(false)}
-                className="text-black rounded cursor-pointer justify-center items-center text-xl"
+                className="text-white/30 hover:text-white/70 text-lg leading-none cursor-pointer transition-colors"
               >
-                x
+                ✕
               </button>
-            </h2>
-           
-            <input
-              type="text"
-              placeholder="Link"
-              value={link}
-              onChange={(e) => setLink(e.target.value)}
-            className="w-full p-2 mb-3 rounded bg-neutral-100 border border-black text-black  outline-none"
-            />
-           
-            <input
-              type="text"
-              placeholder="Tags (comma separated)"
-              value={tags}
-              onChange={(e) => setTags(e.target.value)}
-            className="w-full p-2 mb-3 rounded bg-neutral-100 border border-black text-black  outline-none"
-            />
-            <div className="flex justify-center gap-4">
+            </div>
+
+            {/* Fields */}
+            <div className="space-y-3">
+              <div>
+                <label className="block text-xs text-white/35 mb-1.5 uppercase tracking-widest">URL</label>
+                <input
+                  type="text"
+                  placeholder="https://…"
+                  value={link}
+                  onChange={(e) => setLink(e.target.value)}
+                  className="
+                    w-full bg-white/[0.04] border border-white/[0.08] rounded-lg
+                    px-4 py-2.5 text-sm text-white/80 placeholder-white/20
+                    outline-none focus:border-white/20 focus:bg-white/[0.06]
+                    transition-all duration-150
+                  "
+                />
+              </div>
+              <div>
+                <label className="block text-xs text-white/35 mb-1.5 uppercase tracking-widest">Tags</label>
+                <input
+                  type="text"
+                  placeholder="design, tools, reference"
+                  value={tags}
+                  onChange={(e) => setTags(e.target.value)}
+                  className="
+                    w-full bg-white/[0.04] border border-white/[0.08] rounded-lg
+                    px-4 py-2.5 text-sm text-white/80 placeholder-white/20
+                    outline-none focus:border-white/20 focus:bg-white/[0.06]
+                    transition-all duration-150
+                  "
+                />
+                <p className="text-[10px] text-white/20 mt-1.5">Separate tags with commas</p>
+              </div>
+            </div>
+
+            {/* Error */}
+            {error && (
+              <p className="mt-3 text-xs text-red-400/80">{error}</p>
+            )}
+
+            {/* Actions */}
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={() => setShowModal(false)}
+                className="
+                  flex-1 px-4 py-2.5 rounded-lg text-sm
+                  text-white/40 border border-white/[0.08]
+                  hover:text-white/60 hover:border-white/[0.15]
+                  transition-all duration-150 cursor-pointer
+                "
+              >
+                Cancel
+              </button>
               <button
                 onClick={handleUpload}
-                className="bg-gradient-to-t from-black to-neutral-700 hover:bg-blue-700 px-4 py-2 rounded text-white"
+                disabled={loading}
+                className="
+                  flex-1 px-4 py-2.5 rounded-lg text-sm font-medium
+                  bg-white text-black
+                  hover:bg-white/90 disabled:opacity-40
+                  transition-all duration-150 cursor-pointer
+                "
               >
-                Upload
+                {loading ? "Saving…" : "Save"}
               </button>
-             
             </div>
           </div>
         </div>

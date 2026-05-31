@@ -24,9 +24,11 @@ model Bookmark{
   content String? 
   name String?  @default("untitled")
   link String 
+  deleted Boolean @default(false)
   tags Tag[]
   Ownerid Int
   Owner User @relation(fields:[Ownerid],references: [id])
+  
 
 
 

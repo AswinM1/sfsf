@@ -21,7 +21,10 @@ function Dashboard() {
   const spanref=useRef(null)
 
   useEffect(() => {
+    
+
     getData();
+    
     const handleSearch=(e:any)=>
   {
      const activeEl = document.activeElement?.tagName;
@@ -53,13 +56,34 @@ function Dashboard() {
   }, []);
 
 
-  
+  const handleDelete=async(e:any,id:any)=>
+    {
+   
+    e.preventDefault();
+
+    try {
+      await axios.delete("/api/upload", {
+        data: {
+          id: id,
+        },
+      });
+
+      getData();
+    } catch (err) {
+      console.log(err);
+    }
+  }
+      
   const getData = async () => {
     try {
       setLoading(true);
       const res = await axios.get("/api/upload");
-      setData(res.data.data);
-      setAllData(res.data.data);
+      const filtered = res.data.data.filter(
+  (val: any) => val.deleted === false
+);
+
+setData(filtered);
+setAllData(filtered);
       setError(null);
     } catch (err) {
       setError("Failed to fetch data.");
@@ -196,7 +220,7 @@ function Dashboard() {
             <span className="w-3 h-px bg-white/70 block" />
           </button>
 
-          {/* Search */}
+          
           <div className="flex-1 relative max-w-sm">
 <input
   value={search}
@@ -314,8 +338,10 @@ function Dashboard() {
                         flex flex-col
                       "
                     >
+                      
                       {/* Thumbnail */}
                       <div className="w-full h-10 bg-white/[0.04] flex overflow-hidden justify-start items-center mx-0">
+                      
                         {item.icon ? (
                           <img
                             src={item.icon}
@@ -331,14 +357,29 @@ function Dashboard() {
 
                       {/* Info */}
                      <div className="p-3 flex justify-between items-start gap-2">
+                      
                         <h3 className="text-sm font-medium text-white/90 px-2">
                           {item.name || "Untitled"}
                         </h3>
+                         <button
+  onClick={ (e)=>handleDelete(e,item.bid)}
+  className="
+    text-red-400 hover:text-red-300
+    text-xs border border-red-500/20
+    px-2 py-1 rounded-md
+    hover:bg-red-500/10
+    transition-all
+    cursor-pointer
+  "
+>
+  Delete
+</button>
 
                         
                          
                          
                       </div>
+                     
                     </Link>
                   ))}
                 </div>

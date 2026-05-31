@@ -39,16 +39,19 @@ export async function GET(req:Request){
 
 export async function DELETE(req: Request) {
   try {
-    const { bid } = await req.json();
+    const body= await req.json();
 
-    await prisma.bookmark.delete({
+    await prisma.bookmark.update({
       where: {
-        bid,
+        bid:body.id,
       },
+      data:{
+        deleted:true
+      }
     });
 
     return Response.json({
-      message: "Deleted successfully",
+      message: "Moved to trash successfully",
     });
   } catch (err) {
     return Response.json(

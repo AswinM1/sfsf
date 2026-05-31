@@ -34,6 +34,31 @@ export async function GET(req:Request){
     })
     return Response.json({data:body})
 }
+
+
+
+export async function DELETE(req: Request) {
+  try {
+    const { bid } = await req.json();
+
+    await prisma.bookmark.delete({
+      where: {
+        bid,
+      },
+    });
+
+    return Response.json({
+      message: "Deleted successfully",
+    });
+  } catch (err) {
+    return Response.json(
+      {
+        error: "Delete failed",
+      },
+      { status: 500 }
+    );
+  }
+}
 export async function getMetadata(url: string) {
   try {
     const response = await fetch(url);
@@ -112,9 +137,9 @@ const metadata = await getMetadata(body.link);
   const bookmark = await prisma.bookmark.create({
      data: {
       link: body.link,
-      name:body.title||metadata.title  ,
-      icon:metadata.icon || "",
+      name:metadata.title  ,
       content:metadata.content || "",
+      icon:metadata.icon || "",
       tags: {
         connectOrCreate: body.tags.map(
           (tag: string) => ({

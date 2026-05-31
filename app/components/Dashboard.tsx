@@ -5,6 +5,7 @@ import React, { useState, useEffect, useRef } from "react";
 
 function Dashboard() {
   const [allData, setAllData] = useState<any[]>([]);
+  const[sv,setSv]=useState(false)
   const[title,setTitle]=useState("")
   const [link, setLink] = useState<string>("");
   const [tags, setTags] = useState<string>("");
@@ -27,18 +28,28 @@ function Dashboard() {
       if (activeEl === 'INPUT' || activeEl === 'TEXTAREA') {
         return; 
       }
-    if(e.key=="f"||e.key=="F")
+    if(e.key.toLowerCase()>="a" && e.key.toLowerCase()<="z" ||e.key>='0' && e.key<='9')
     {
       e.preventDefault();
+      setSv(true);
       searchhook.current?.focus()
       
 
+    }
+    if(e.key==='Enter')
+    {
+      e.preventDefault()
+      searchhook.current?.blur()
+      setSv(false)
     }
 
 
   }
   window.addEventListener("keydown",handleSearch)
 
+   return () => {
+    window.removeEventListener("keydown", handleSearch);
+  };
   }, []);
 
 
@@ -96,9 +107,7 @@ function Dashboard() {
 
   const navItems = [
     { label: "All", icon: "▦" },
-    { label: "Links", icon: "⌁" },
-    { label: "Tags", icon: "⊹" },
-    { label: "Shared", icon: "↗" },
+    {label:"Collections",icon:"[]"}
   ];
 
   return (
@@ -192,6 +201,8 @@ function Dashboard() {
 <input
   value={search}
   placeholder="Search bookmarks…"
+  onBlur={()=>setSv(false)}
+  onFocus={()=>setSv(true)}
   ref={searchhook}
   onChange={(e) => {
     const value = e.target.value;
@@ -213,12 +224,14 @@ function Dashboard() {
       setData(allData);
     }
   }}
-  className="
-    w-full bg-white/[0.05] border border-white/[0.08] rounded-lg
+
+  className={
+  
+    ` ${`sv ? "w-full bg-white/[0.05] border border-white/[0.08] rounded-lg
     pl-8 pr-4 py-2 text-sm text-white/80 placeholder-white/25
     outline-none focus:border-white/20 focus:bg-white/[0.07]
-    transition-all duration-150
-  "
+    transition-all duration-150" : "w-0 opacity-0"`}
+  `}
 />
           </div>
 
@@ -254,17 +267,7 @@ function Dashboard() {
        
         <div className="flex-1 px-5 py-6 overflow-auto">
 
-          {/* Shared hash banner */}
-          {sh && (
-            <div className="mb-5 flex items-start gap-3 bg-white/[0.05] border border-white/[0.1] rounded-lg px-4 py-3">
-              <span className="text-white/40 text-xs mt-0.5">↗</span>
-              <div>
-                <p className="text-xs text-white/40 mb-0.5 uppercase tracking-tight">Shared Link Hash</p>
-                <p className="text-sm text-white/80 break-all font-sans">{sh}</p>
-              </div>
-              <button onClick={() => setSh("")} className="ml-auto text-white/30 hover:text-white/60 text-xs cursor-pointer">✕</button>
-            </div>
-          )}
+        
 
           {/* Error */}
           {error && (
@@ -299,7 +302,9 @@ function Dashboard() {
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                   {data.map((item, index) => (
-                    <div
+
+                    <Link
+                    href={item.link}
                       key={index}
                       className="
                         group bg-[#111111] border border-white/[0.07]
@@ -310,12 +315,12 @@ function Dashboard() {
                       "
                     >
                       {/* Thumbnail */}
-                      <div className="w-full h-40 bg-white/[0.04] overflow-hidden">
+                      <div className="w-full h-10 bg-white/[0.04] flex overflow-hidden justify-start items-center mx-0">
                         {item.icon ? (
                           <img
                             src={item.icon}
                             alt={item.name}
-                            className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-[1.02] transition-all duration-300"
+                            className="w-10 h-fit rounded-full justify-center items-center flex object-cover opacity-100 group-hover:opacity-100 group-hover:scale-[1.02] transition-all duration-300"
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center text-white/10 text-3xl">
@@ -325,38 +330,16 @@ function Dashboard() {
                       </div>
 
                       {/* Info */}
-                      <div className="p-4 flex flex-col gap-2 flex-1">
-                        <h3 className="text-sm font-medium text-white/90 leading-snug line-clamp-2">
+                     <div className="p-3 flex justify-between items-start gap-2">
+                        <h3 className="text-sm font-medium text-white/90 px-2">
                           {item.name || "Untitled"}
                         </h3>
 
-                        {item.link ? (
-                          <Link
-                            href={item.link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-xs text-white/35 hover:text-white/60 truncate transition-colors duration-150"
-                          >
-                            {item.link}
-                          </Link>
-                        ) : (
-                          <span className="text-xs text-white/20">No link</span>
-                        )}
-
-                         {item.tags && item.tags.length > 0 && (
-                          <div className="flex flex-wrap gap-1.5 mt-auto pt-2">
-                            {item.tags.map((tag: string, i: number) => (
-                              <span
-                                key={i}
-                                className="text-[15px] font-sans text-white/40 border border-white/[0.08] px-2 py-0.5 rounded-full"
-                              >
-                                {tag.name}
-                              </span>
-                            ))}
-                          </div>
-                        )} 
+                        
+                         
+                         
                       </div>
-                    </div>
+                    </Link>
                   ))}
                 </div>
               )}

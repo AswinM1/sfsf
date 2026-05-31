@@ -255,7 +255,7 @@ function TrashPage() {
                   {/* Restore */}
                   <button
                     onClick={(e) =>
-                      restoreBookmark(e, item.id)
+                      restoreBookmark(e, item.bid)
                     }
                     className="
                       flex-1 py-2 rounded-lg

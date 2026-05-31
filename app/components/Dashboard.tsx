@@ -5,6 +5,7 @@ import React, { useState, useEffect, useRef } from "react";
 
 function Dashboard() {
   const [allData, setAllData] = useState<any[]>([]);
+  const[title,setTitle]=useState("")
   const [link, setLink] = useState<string>("");
   const [tags, setTags] = useState<string>("");
   const [data, setData] = useState<any[]>([]);
@@ -395,6 +396,21 @@ function Dashboard() {
                   placeholder="https://…"
                   value={link}
                   onChange={(e) => setLink(e.target.value)}
+                  className="
+                    w-full bg-white/[0.04] border border-white/[0.08] rounded-lg
+                    px-4 py-2.5 text-sm text-white/80 placeholder-white/20
+                    outline-none focus:border-white/20 focus:bg-white/[0.06]
+                    transition-all duration-150
+                  "
+                />
+              </div>
+              <div>
+                <label className="block text-xs text-white/35 mb-1.5 uppercase tracking-widest">URL</label>
+                <input
+                  type="text"
+                  placeholder="title"
+                  value={link}
+                  onChange={(e) => setTitle(e.target.value)}
                   className="
                     w-full bg-white/[0.04] border border-white/[0.08] rounded-lg
                     px-4 py-2.5 text-sm text-white/80 placeholder-white/20

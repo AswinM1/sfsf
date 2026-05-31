@@ -67,7 +67,7 @@ function Dashboard() {
   };
 
   const handleUpload = async () => {
-    if (!link) {
+    if (!link || !title) {
       setError("Please fill in all fields.");
       return;
     }
@@ -77,12 +77,13 @@ function Dashboard() {
       const tagArray = tags.split(",").map((tag) => tag.trim()).filter(Boolean);
       await axios.post(
         "/api/upload",
-        { link, tags: tagArray },
+        { link,title, tags: tagArray},
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setLink("");
       setTags("");
       getData();
+      setTitle("")
       setError(null);
       setShowModal(false);
     } catch (err) {
@@ -102,8 +103,7 @@ function Dashboard() {
 
   return (
     <div
-      className="min-h-screen flex bg-[#0c0c0c] text-white"
-      style={{ fontFamily: "'DM Mono', 'Courier New', monospace" }}
+      className="min-h-screen flex bg-[#0c0c0c] text-white font-sans tracking-tight"
     >
       {/* ---------- SIDEBAR OVERLAY (mobile) ---------- */}
       {sidebarOpen && (
@@ -126,7 +126,7 @@ function Dashboard() {
       >
         {/* Logo */}
         <div className="px-6 py-7 border-b border-white/[0.06]">
-          <span className="text-white font-semibold text-sm tracking-widest uppercase">
+          <span className="text-white font-semibold text-sm tracking-tight uppercase">
             ◈ Workspace
           </span>
         </div>
@@ -202,8 +202,8 @@ function Dashboard() {
         return (
           val.title?.toLowerCase().includes(value.toLowerCase()) ||
           val.link?.toLowerCase().includes(value.toLowerCase()) ||
-          val.tags?.some((tag: string) =>
-            tag.toLowerCase().includes(value.toLowerCase())
+          val.tags?.some((tag:any) =>
+            tag.name.toLowerCase().includes(value.toLowerCase())
           )
         );
       });
@@ -259,8 +259,8 @@ function Dashboard() {
             <div className="mb-5 flex items-start gap-3 bg-white/[0.05] border border-white/[0.1] rounded-lg px-4 py-3">
               <span className="text-white/40 text-xs mt-0.5">↗</span>
               <div>
-                <p className="text-xs text-white/40 mb-0.5 uppercase tracking-widest">Shared Link Hash</p>
-                <p className="text-sm text-white/80 break-all font-mono">{sh}</p>
+                <p className="text-xs text-white/40 mb-0.5 uppercase tracking-tight">Shared Link Hash</p>
+                <p className="text-sm text-white/80 break-all font-sans">{sh}</p>
               </div>
               <button onClick={() => setSh("")} className="ml-auto text-white/30 hover:text-white/60 text-xs cursor-pointer">✕</button>
             </div>
@@ -311,10 +311,10 @@ function Dashboard() {
                     >
                       {/* Thumbnail */}
                       <div className="w-full h-40 bg-white/[0.04] overflow-hidden">
-                        {item.img ? (
+                        {item.icon ? (
                           <img
-                            src={item.img}
-                            alt={item.title}
+                            src={item.icon}
+                            alt={item.name}
                             className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-[1.02] transition-all duration-300"
                           />
                         ) : (
@@ -327,7 +327,7 @@ function Dashboard() {
                       {/* Info */}
                       <div className="p-4 flex flex-col gap-2 flex-1">
                         <h3 className="text-sm font-medium text-white/90 leading-snug line-clamp-2">
-                          {item.title || "Untitled"}
+                          {item.name || "Untitled"}
                         </h3>
 
                         {item.link ? (
@@ -343,18 +343,18 @@ function Dashboard() {
                           <span className="text-xs text-white/20">No link</span>
                         )}
 
-                        {/* {item.tags && item.tags.length > 0 && (
+                         {item.tags && item.tags.length > 0 && (
                           <div className="flex flex-wrap gap-1.5 mt-auto pt-2">
                             {item.tags.map((tag: string, i: number) => (
                               <span
                                 key={i}
-                                className="text-[10px] text-white/40 border border-white/[0.08] px-2 py-0.5 rounded-full"
+                                className="text-[15px] font-sans text-white/40 border border-white/[0.08] px-2 py-0.5 rounded-full"
                               >
-                                {tag}
+                                {tag.name}
                               </span>
                             ))}
                           </div>
-                        )} */}
+                        )} 
                       </div>
                     </div>
                   ))}
@@ -378,7 +378,7 @@ function Dashboard() {
           >
             {/* Modal header */}
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-base font-medium text-white/90 tracking-tight">New Bookmark</h2>
+              <h2 className="text-base font-sans text-white/90 tracking-tight">New Bookmark</h2>
               <button
                 onClick={() => setShowModal(false)}
                 className="text-white/30 hover:text-white/70 text-lg leading-none cursor-pointer transition-colors"
@@ -390,7 +390,7 @@ function Dashboard() {
             {/* Fields */}
             <div className="space-y-3">
               <div>
-                <label className="block text-xs text-white/35 mb-1.5 uppercase tracking-widest">URL</label>
+                <label className="block text-xs text-white/35 mb-1.5 uppercase tracking-tight">URL</label>
                 <input
                   type="text"
                   placeholder="https://…"
@@ -405,7 +405,7 @@ function Dashboard() {
                 />
               </div>
               <div>
-                <label className="block text-xs text-white/35 mb-1.5 uppercase tracking-widest">Title</label>
+                <label className="block text-xs text-white/35 mb-1.5 uppercase tracking-tight">Title</label>
                 <input
                   type="text"
                   placeholder="title"
@@ -420,7 +420,7 @@ function Dashboard() {
                 />
               </div>
               <div>
-                <label className="block text-xs text-white/35 mb-1.5 uppercase tracking-widest">Tags</label>
+                <label className="block text-xs text-white/35 mb-1.5 uppercase tracking-tight">Tags</label>
                 <input
                   type="text"
                   placeholder="design, tools, reference"

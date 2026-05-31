@@ -20,6 +20,8 @@ model User{
 }
 model Bookmark{
   bid Int @id @unique @default(autoincrement())
+  icon String?
+  content String? 
   name String?  @default("untitled")
   link String 
   tags Tag[]

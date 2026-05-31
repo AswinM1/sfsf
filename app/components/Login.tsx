@@ -44,7 +44,7 @@ export default function LoginPage() {
         onSubmit={handleLogin}
         className="p-8  w-80 rounded-md "
       >
-        <h2 className="text-2xl font-bold mb-4 text-center font-sans  text-black tracking-tighter">Login</h2>
+        <h2 className="text-2xl font-bold mb-4 text-center font-sans text-black tracking-tight">Login</h2>
         <p className="font-medium text-sm mx-auto justify-center flex mb-3 text-neutral-800 font-sans tracking-tight">Hello please login into your account</p>
         <input
           type="email"
@@ -71,7 +71,7 @@ export default function LoginPage() {
           Login
         </button>
         {message && <p className="mt-4 text-center text-sm">{message}</p>}
-        <p className="text-black font-sans tracking-tighter font-medium text-sm flex justify-center mt-3">New user?   <Link href={"/signup"} >  Signup</Link></p>
+        <p className="text-black font-sans tracking-tight font-medium text-sm flex justify-center mt-3">New user?   <Link href={"/signup"} >  Signup</Link></p>
       </form>
       </div>
       </div>

@@ -39,7 +39,7 @@ export default function SignupPage() {
         onSubmit={handleSignup}
         className="bg-neutral-100 p-8 rounded-md shadow-lg w-80"
       >
-        <h2 className="text-2xl font-bold mb-4 text-center text-black font-sans tracking-tighter">Sign Up</h2>
+        <h2 className="text-2xl font-bold mb-4 text-center text-black font-sans tracking-tight">Sign Up</h2>
 
         <input
           type="email"
@@ -67,7 +67,7 @@ export default function SignupPage() {
         </button>
 
         {message && <p className="mt-4 text-sm text-center">{message}</p>}
-           <p className="text-black font-sans tracking-tighter font-medium text-sm flex justify-center ">Already a user?  <Link href={"/login"}  >Login</Link></p>
+           <p className="text-black font-sans tracking-tight font-medium text-sm flex justify-center ">Already a user?  <Link href={"/login"}  >Login</Link></p>
       </form>
     </div>
   );

@@ -22,7 +22,7 @@ export default function Features() {
   return ( 
     <div className="flex w-full h-screen bg-neutral-200 mt-5 py-10 rounded-t-2xl  shadow-black">
     <div className="text-center flex flex-col w-full h-screen mx-auto">
-      <h2 className="text-5xl font-bold mb-10 tracking-tighter text-black">How does it work</h2>
+      <h2 className="text-5xl font-bold mb-10 tracking-tight text-black">How does it work</h2>
       <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
         {features.map((f, i) => (
           <div key={i} className="p-6 rounded-lg bg-neutral-300 shadow hover:shadow-lg transition">

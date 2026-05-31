@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
-import { prisma } from "../../lib/prisma";
+import { prisma } from "@/app/lib/prisma";
 
 export async function POST(req: NextRequest) {
   try {
@@ -8,26 +8,47 @@ export async function POST(req: NextRequest) {
 
     const { email, password } = body;
 
-    const user = await prisma.user.create({
-      data: {
+    const user = await prisma.user.findUnique({
+      where: {
         email,
-        password,
       },
     });
 
-    const tokendata = {
-      userId: user.id,
-    };
+    if (!user) {
+      return NextResponse.json(
+        {
+          message: "User not found",
+          success: false,
+        },
+        {
+          status: 404,
+        }
+      );
+    }
+
+    if (user.password !== password) {
+      return NextResponse.json(
+        {
+          message: "Invalid password",
+          success: false,
+        },
+        {
+          status: 401,
+        }
+      );
+    }
 
     const token = jwt.sign(
-      tokendata,
+      {
+        userId: user.id,
+      },
       process.env.SECRET_KEY!
     );
 
     const response = NextResponse.json({
-      message: "login success",
-      token,
+      message: "Login successful",
       success: true,
+      token,
     });
 
     response.cookies.set("token", token);
@@ -38,7 +59,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(
       {
-        message: "server error",
+        message: "Server error",
         success: false,
       },
       {

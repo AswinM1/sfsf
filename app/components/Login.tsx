@@ -30,12 +30,12 @@ export default function LoginPage() {
         console.log("hello")
         Router.push("/dashboard")
     
-      // No need to store the token manually, it's in the cookie already
+      
     } else {
       setMessage(data.message || "Login failed");
       toast.error(message)
       console.log("user not found")
-      Router.push("/signup")
+      
     }
   };
 

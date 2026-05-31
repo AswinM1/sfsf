@@ -130,9 +130,9 @@ setAllData(filtered);
   };
 
   const navItems = [
-    { label: "All", icon: "▦" },
-    {label:"Collections",icon:"[]"}
-  ];
+  { label: "All", icon: "▦", href: "/dashboard" },
+  { label: "Trash", icon: "🗑", href: "/trash" },
+];
 
   return (
     <div
@@ -167,7 +167,8 @@ setAllData(filtered);
         {/* Nav */}
         <nav className="flex-1 px-3 py-6 space-y-1">
           {navItems.map((item) => (
-            <button
+            <Link
+            href={item.href}
               key={item.label}
               onClick={() => {
                 setActiveNav(item.label);
@@ -185,7 +186,7 @@ setAllData(filtered);
             >
               <span className="text-base leading-none">{item.icon}</span>
               {item.label}
-            </button>
+            </Link>
           ))}
         </nav>
 

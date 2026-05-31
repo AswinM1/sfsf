@@ -383,12 +383,13 @@ setAllData(filtered);
 
   
   <button
-    onClick={(e) => handleDelete(e, item.id)}
+    onClick={(e) => handleDelete(e, item.bid)}
     className="
      bg-neutral-800
      text-white font-sans
      text-[13px]
       px-2 py-1 rounded-md
+      cursor-pointer
      
       transition-all
       shrink-0

@@ -54,6 +54,7 @@ export async function DELETE(req: Request) {
       message: "Moved to trash successfully",
     });
   } catch (err) {
+    console.log(err);
     return Response.json(
       {
         error: "Delete failed",

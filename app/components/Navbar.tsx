@@ -10,15 +10,15 @@ const Navbar = () => {
   const toggleMenu = () => setIsOpen(!isOpen);
 
   return (
-    <nav className="bg-white shadow-md px-6 py-4 flex items-center justify-between">
-      <div className="text-2xl font-bold text-black  px-4">Brain.io</div>
+    <nav className="bg-neutral-900 max-w-full min-w-3xl  mx-auto shadow-md px-6 py-4   flex items-center justify-between">
+      <div className="text-xl font-semibold font-sans text-neutral-200  py-1   px-4">Bookmarks.it</div>
 
       
       <div className="hidden md:flex space-x-6 items-center ">
-        <a href="#" className="text-gray-700">Home</a>
-        <a href="#" className="text-gray-700">Features</a>
+        <a href="/" className="text-neutral-300 font-sans text-[15px]" >Home</a>
+     
         
-        <Link href={"/login"} > <button className="bg-gradient-to-t from-black to-neutral-800 shadow-lg shadow-black/20 cursor-pointer text-white px-4 py-2 rounded-lg">Login</button>
+        <Link href={"/login"} > <button className="bg-neutral-200 shadow-lg shadow-black/20 cursor-pointer text-black font-sans px-3 py-1 rounded-lg text-[15px]">Login</button>
     </Link>
       </div>
        
@@ -34,10 +34,9 @@ const Navbar = () => {
       {isOpen && (
         <div className="absolute top-16 left-0 w-full bg-white shadow-md md:hidden">
           <div className="flex flex-col items-start px-6 py-4 space-y-3">
-            <a href="#" className="text-gray-700">Home</a>
-            <a href="#" className="text-gray-700">Features</a>
-            <a href="#" className="text-gray-700">Pricing</a>
-            <a href="#" className="text-gray-700">About</a>
+            <a href="#" className="text-neutral-300">Home</a>
+            <a href="#" className="text-neutral-300">Login</a>
+           
             <button className="bg-black text-white px-4 py-2 rounded-lg w-full">Login</button>
           </div>
         </div>

@@ -1,12 +1,9 @@
 @import "tailwindcss";
 
-:root {
-  --background: #e3e3e3;
 
-}
 body{
   overflow-x: hidden;
-  
+
 }
 
 @theme inline {
@@ -16,12 +13,7 @@ body{
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-   
-    --foreground: #ededed;
-  }
-}
+
 
 body {
   background: var(--background);

@@ -36,42 +36,45 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-neutral-200">
+    <div className="min-h-screen flex items-center justify-center bg-neutral-900">
       <div className="flex w-full">
-        <div className="md:flex w-1/2 h-screen bg-gradient-to-t from-purple-400 to-blue-300 md:visible hidden"></div>
-        <div className="flex justify-center items-center mx-auto bg-neutral-200">
+       
+        <div className="flex justify-center items-center mx-auto bg-neutral-900">
       <form
         onSubmit={handleLogin}
-        className="p-8  w-80 rounded-md "
+        className="p-8  w-100  "
       >
-        <h2 className="text-2xl font-bold mb-4 text-center font-sans text-black tracking-tight">Login</h2>
-        <p className="font-medium text-sm mx-auto justify-center flex mb-3 text-neutral-800 font-sans tracking-tight">Hello please login into your account</p>
+        <h2 className="text-2xl font-semibold mb-4 text-center font-sans text-white tracking-tight">Login</h2>
+        <div className="h-px bg-gray-500 my-4"></div>
+        <label className="text-neutral-400 ">Email</label>
         <input
           type="email"
-          placeholder="Email"
+          placeholder="sample@gmail.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full mb-4 p-2 border rounded text-black"
+          className="w-full mb-5 p-2 mt-2 border rounded text-white font-sans"
           required
         />
+         <label className="text-neutral-400 ">Password</label>
         <input
 
           type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full mb-4 p-2 border rounded text-black"
+          className="w-full mb-4 mt-2 p-2 border rounded text-neutral-400 font-sans"
           required
          
         />
         <button
           type="submit"
-          className="w-full bg-gradient-to-t from-black to-neutral-700 shadow-md   text-white p-2 rounded hover:bg-blue-600"
+          className="w-full  shadow-md   font-sans bg-neutral-300 cursor-pointer mb-4 text-black p-2 rounded hover:bg-neutral-400"
         >
           Login
         </button>
         {message && <p className="mt-4 text-center text-sm">{message}</p>}
-        <p className="text-black font-sans tracking-tight font-medium text-sm flex justify-center mt-3">New user?   <Link href={"/signup"} >  Signup</Link></p>
+        <div className="h-px bg-gray-300 my-4"></div>
+        <p className=" font-sans  font-medium text-sm flex justify-center mt-3 text-neutral-400 underline"><Link href={"/signup"} >Signup Now</Link></p>
       </form>
       </div>
       </div>

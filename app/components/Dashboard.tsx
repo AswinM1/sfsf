@@ -138,7 +138,7 @@ setAllData(filtered);
     <div
       className="min-h-screen flex bg-[#0c0c0c] text-white font-sans tracking-tight"
     >
-      {/* ---------- SIDEBAR OVERLAY (mobile) ---------- */}
+      
       {sidebarOpen && (
         <div
           className="fixed inset-0 bg-black/60 backdrop-blur-sm z-20 lg:hidden"

@@ -66,6 +66,7 @@ function TrashPage() {
     <div className="min-h-screen bg-[#0c0c0c] text-white p-6 font-sans tracking-tight">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
+        
         <div>
           <h1 className="text-2xl font-semibold">
             Trash
@@ -121,7 +122,7 @@ function TrashPage() {
         {data.map((item) => (
           <Link
             href={item.link}
-            key={item.id}
+            key={item.bid}
             className="
               bg-[#111111]
               border border-white/10

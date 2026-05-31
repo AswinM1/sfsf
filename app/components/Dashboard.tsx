@@ -1,7 +1,7 @@
 "use client";
 import axios from "axios";
 import Link from "next/link";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 function Dashboard() {
   const [allData, setAllData] = useState<any[]>([]);
@@ -14,11 +14,34 @@ function Dashboard() {
   const [sh, setSh] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
   const [activeNav, setActiveNav] = useState<string>("All");
+  const searchhook=useRef(null)
+  const[search,setSearch]=useState("")
+  const spanref=useRef(null)
 
   useEffect(() => {
     getData();
+    const handleSearch=(e:any)=>
+  {
+     const activeEl = document.activeElement?.tagName;
+      if (activeEl === 'INPUT' || activeEl === 'TEXTAREA') {
+        return; 
+      }
+    if(e.key=="f"||e.key=="F")
+    {
+      e.preventDefault();
+      searchhook.current?.focus()
+      
+
+    }
+
+
+  }
+  window.addEventListener("keydown",handleSearch)
+
   }, []);
 
+
+  
   const getData = async () => {
     try {
       setLoading(true);
@@ -165,23 +188,37 @@ function Dashboard() {
 
           {/* Search */}
           <div className="flex-1 relative max-w-sm">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30 text-xs">⌕</span>
-            <input
-              placeholder="Search bookmarks…"
-              onChange={(e) => {
-                if (e.target.value.length > 0) {
-                  setData(allData.filter((val) => val.title?.includes(e.target.value)));
-                } else {
-                  setData(allData);
-                }
-              }}
-              className="
-                w-full bg-white/[0.05] border border-white/[0.08] rounded-lg
-                pl-8 pr-4 py-2 text-sm text-white/80 placeholder-white/25
-                outline-none focus:border-white/20 focus:bg-white/[0.07]
-                transition-all duration-150
-              "
-            />
+<input
+  value={search}
+  placeholder="Search bookmarks…"
+  ref={searchhook}
+  onChange={(e) => {
+    const value = e.target.value;
+    setSearch(value);
+
+    if (value.trim().length > 0) {
+      const filtered = allData.filter((val) => {
+        return (
+          val.title?.toLowerCase().includes(value.toLowerCase()) ||
+          val.link?.toLowerCase().includes(value.toLowerCase()) ||
+          val.tags?.some((tag: string) =>
+            tag.toLowerCase().includes(value.toLowerCase())
+          )
+        );
+      });
+
+      setData(filtered);
+    } else {
+      setData(allData);
+    }
+  }}
+  className="
+    w-full bg-white/[0.05] border border-white/[0.08] rounded-lg
+    pl-8 pr-4 py-2 text-sm text-white/80 placeholder-white/25
+    outline-none focus:border-white/20 focus:bg-white/[0.07]
+    transition-all duration-150
+  "
+/>
           </div>
 
           <div className="flex items-center gap-2 ml-auto">
@@ -213,7 +250,7 @@ function Dashboard() {
           </div>
         </header>
 
-        {/* Content Body */}
+       
         <div className="flex-1 px-5 py-6 overflow-auto">
 
           {/* Shared hash banner */}

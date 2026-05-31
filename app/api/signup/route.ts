@@ -1,28 +1,64 @@
 import { NextRequest, NextResponse } from "next/server";
-import jwt from "jsonwebtoken";
 import { prisma } from "@/app/lib/prisma";
 
-export async function POST(req:NextRequest){
- 
-    const body=await req.json()
-    const {email,password}=body
-    if(!email||!password){
-        return NextResponse.json({
-            message:"no data bruuuuuhhhh",
-            success:false
-        })
+export async function POST(req: NextRequest) {
+  try {
+    const body = await req.json();
+
+    const { email, password } = body;
+
+    if (!email || !password) {
+      return NextResponse.json(
+        {
+          message: "Email and password required",
+          success: false,
+        },
+        {
+          status: 400,
+        }
+      );
     }
-    const val=await prisma.user.create({data:{
+
+    const existingUser = await prisma.user.findUnique({
+      where: {
         email,
-        password
-    }})
+      },
+    });
+
+    if (existingUser) {
+      return NextResponse.json(
+        {
+          message: "User already exists",
+          success: false,
+        },
+        {
+          status: 409,
+        }
+      );
+    }
+
+    await prisma.user.create({
+      data: {
+        email,
+        password,
+      },
+    });
+
     return NextResponse.json({
-        message:"user created succesful",
-        success:true
-    })
+      message: "User created successfully",
+      success: true,
+    });
+  } catch (error) {
+    console.log(error);
 
-    
-     }
-
-
-    
+    return NextResponse.json(
+      {
+        message: "Server error",
+        success: false,
+      },
+      {
+        status: 500,
+      }
+    );
+  }
+}

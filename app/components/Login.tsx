@@ -1,12 +1,14 @@
 "use client";
 import { useState } from "react";
-import Router, { useRouter } from "next/navigation";
+import  { useRouter } from "next/navigation"
 import Link from "next/link";
+import { toast,ToastContainer } from "react-toastify";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+
   const Router =useRouter()
   
   const handleLogin = async (e: React.FormEvent) => {
@@ -24,12 +26,14 @@ export default function LoginPage() {
     
     if (data.success===true) {
         setMessage("Login successful");
+        toast.success(message)
         console.log("hello")
         Router.push("/dashboard")
     
       // No need to store the token manually, it's in the cookie already
     } else {
       setMessage(data.message || "Login failed");
+      toast.error(message)
       console.log("user not found")
       Router.push("/signup")
     }
@@ -72,7 +76,7 @@ export default function LoginPage() {
         >
           Login
         </button>
-        {message && <p className="mt-4 text-center text-sm">{message}</p>}
+        <ToastContainer></ToastContainer>
         <div className="h-px bg-gray-300 my-4"></div>
         <p className=" font-sans  font-medium text-sm flex justify-center mt-3 text-neutral-400 underline"><Link href={"/signup"} >Signup Now</Link></p>
       </form>

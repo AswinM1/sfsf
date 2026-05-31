@@ -405,7 +405,7 @@ function Dashboard() {
                 />
               </div>
               <div>
-                <label className="block text-xs text-white/35 mb-1.5 uppercase tracking-widest">URL</label>
+                <label className="block text-xs text-white/35 mb-1.5 uppercase tracking-widest">Title</label>
                 <input
                   type="text"
                   placeholder="title"

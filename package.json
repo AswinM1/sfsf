@@ -2,6 +2,7 @@
   "name": "secondbr",
   "version": "0.1.0",
   "private": true,
+  "types":"module",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",

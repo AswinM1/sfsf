@@ -409,7 +409,7 @@ function Dashboard() {
                 <input
                   type="text"
                   placeholder="title"
-                  value={link}
+                  value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   className="
                     w-full bg-white/[0.04] border border-white/[0.08] rounded-lg

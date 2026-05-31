@@ -1,100 +1,69 @@
-"use client";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
- import { ToastContainer, toast } from 'react-toastify';
-  
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/app/lib/prisma";
 
-export default function SignupPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
+export async function POST(req: NextRequest) {
+  try {
+    const body = await req.json();
 
-  const Router = useRouter();
+    const { email, password } = body;
 
-  const handleSignup = async (e: React.FormEvent) => {
-    e.preventDefault();
+    if (!email || !password) {
+      return NextResponse.json(
+        {
+          message: "Email and password required",
+          success: false,
+        },
+        {
+          status: 400,
+        }
+      );
+    }
 
-    const res = await fetch("/api/signup", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+    const existingUser = await prisma.user.findUnique({
+      where: {
+        email,
       },
-      body: JSON.stringify({ email, password }),
     });
 
-    let data;
-
-    try {
-      data = await res.json();
-    } catch (error) {
-      setMessage("Invalid server response");
-      return;
+    if (existingUser) {
+      return NextResponse.json(
+        {
+          message: "User already exists",
+          success: false,
+        },
+        {
+          status: 409,
+        }
+      );
     }
 
-    if (res.ok && data.success) {
-      setMessage("Signup successful");
-       toast.success(message)
-      setEmail("");
-      setPassword("");
+    await prisma.user.create({
+      data: {
+        email,
+        password,
+      },
+    });
 
-      Router.push("/login");
-    } else {
-      setMessage(data.message || "Signup failed");
-      toast.error(message)
-    }
-  }; 
+    return NextResponse.json(
+      {
+        message: "User created successfully",
+        success: true,
+      },
+      {
+        status: 201,
+      }
+    );
+  } catch (error) {
+    console.log(error);
 
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-neutral-900">
-      <form
-        onSubmit={handleSignup}
-        className="bg-neutral-900 p-8 rounded-md w-100"
-      >
-        <h2 className="text-2xl font-bold mb-4 text-center text-neutral-300 font-sans tracking-tight">
-          Sign Up
-        </h2>
-
-        <div className="h-px bg-gray-500 my-4"></div>
-
-        <label className="text-neutral-400">Email</label>
-
-        <input
-          type="email"
-          placeholder="Email"
-          className="w-full mb-5 p-2 mt-2 border rounded text-white font-sans"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-
-        <div className="h-px bg-gray-500 my-4"></div>
-
-        <label className="text-neutral-400">Password</label>
-
-        <input
-          type="password"
-          placeholder="Password"
-          className="w-full mb-5 p-2 mt-2 border rounded text-white font-sans"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-
-        <button
-          type="submit"
-          className="w-full shadow-md font-sans bg-neutral-300 cursor-pointer mb-4 text-black p-2 rounded hover:bg-neutral-400"
-        >
-          Signup
-        </button>
-
-       <ToastContainer></ToastContainer>
-
-        <p className="text-neutral-400 underline font-sans tracking-tight font-medium text-sm flex justify-center">
-          Already a user?{"    "}
-          <Link href={"/login"}>Login</Link>
-        </p>
-      </form>
-    </div>
-  );
+    return NextResponse.json(
+      {
+        message: "Server error",
+        success: false,
+      },
+      {
+        status: 500,
+      }
+    );
+  }
 }

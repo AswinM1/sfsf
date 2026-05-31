@@ -340,46 +340,63 @@ setAllData(filtered);
                       "
                     >
                       
-                      {/* Thumbnail */}
-                      <div className="w-full h-10 bg-white/[0.04] flex overflow-hidden justify-start items-center mx-0">
-                      
-                        {item.icon ? (
-                          <img
-                            src={item.icon}
-                            alt={item.name}
-                            className="w-10 h-fit rounded-full justify-center items-center flex object-cover opacity-100 group-hover:opacity-100 group-hover:scale-[1.02] transition-all duration-300"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-white/10 text-3xl">
-                            ◈
-                          </div>
-                        )}
-                      </div>
+                     
+                    
+                     <div className="p-3 flex items-center justify-between gap-3">
+  
+ 
+  <div className="flex items-center gap-3 overflow-hidden">
+    
+    {item.icon ? (
+      <img
+        src={item.icon}
+        alt={item.title}
+        className="
+          w-8 h-8 rounded-full
+          object-cover shrink-0
+        "
+      />
+    ) : (
+      <div
+        className="
+          w-8 h-8 rounded-full
+          bg-white/10
+          flex items-center justify-center
+          text-xs text-white/40
+          shrink-0
+        "
+      >
+        ◈
+      </div>
+    )}
 
-                      {/* Info */}
-                     <div className="p-3 flex justify-between items-start gap-2">
-                      
-                        <h3 className="text-sm font-medium text-white/90 px-2">
-                          {item.name || "Untitled"}
-                        </h3>
-                         <button
-  onClick={ (e)=>handleDelete(e,item.bid)}
-  className="
-    text-red-400 hover:text-red-300
-    text-xs border border-red-500/20
-    px-2 py-1 rounded-md
-    hover:bg-red-500/10
-    transition-all
-    cursor-pointer
-  "
->
-  Delete
-</button>
+    <div className="overflow-hidden w-fit">
+      <h3 className="text-sm font-medium text-white/90 ">
+        {item.name || "Untitled"}
+      </h3>
 
-                        
-                         
-                         
-                      </div>
+      <p className="text-xs text-white/35 truncate">
+        {item.link}
+      </p>
+    </div>
+  </div>
+
+  
+  <button
+    onClick={(e) => handleDelete(e, item.id)}
+    className="
+     bg-neutral-800
+     text-white font-sans
+     text-[13px]
+      px-2 py-1 rounded-md
+     
+      transition-all
+      shrink-0
+    "
+  >
+    Delete
+  </button>
+</div>
                      
                     </Link>
                   ))}
@@ -390,7 +407,7 @@ setAllData(filtered);
         </div>
       </main>
 
-      {/* ---------- ADD BOOKMARK MODAL ---------- */}
+     
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
           <div
